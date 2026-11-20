@@ -58,16 +58,26 @@ const CHECKIN_URL =
 
 let sudahScan = false;
 
+
 function onScanSuccess(decodedText) {
 
   if (sudahScan) return;
 
   sudahScan = true;
 
-  const id = decodedText.trim();
+  const hasilScan = decodedText.trim();
+  let id = hasilScan;
 
-  document.getElementById("hasil").innerHTML =
-    "⏳ Memproses <b>" + id + "</b>...";
+  // Jika QR berisi URL lengkap, ambil ID dari parameter scan
+  try {
+    const url = new URL(hasilScan);
+    id = url.searchParams.get("scan") || hasilScan;
+  } catch (e) {
+    // Jika QR hanya berisi ID, gunakan langsung
+  }
+
+  document.getElementById("hasil").textContent =
+    "⏳ Memproses " + id + "...";
 
   window.location.href =
     CHECKIN_URL + "?scan=" + encodeURIComponent(id);
